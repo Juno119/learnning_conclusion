@@ -1,0 +1,28 @@
+version: "2"  
+services:  
+  docker-dns:  
+    container_name: docker-dns  
+    image: jpillora/dnsmasq  
+    hostname: docker-dns  
+    volumes:  
+      - /dockerdata/docker-dns/resolv.dnsmasq:/etc/resolv.dnsmasq  
+      - /dockerdata/docker-dns/dnsmasqhosts/:/etc/dnsmasqhosts  
+      - /dockerdata/docker-dns/dnsmasq.conf/:/etc/dnsmasq.conf  
+      - /etc/localtime:/etc/localtime:ro  
+    ports:  
+      - 53:53/tcp  
+      - 53:53/udp
+      - 8080:8080/tcp 
+    #cap-add: NET_ADMIN
+    logging:
+      options:
+        max-size: "50m"
+    environment:
+      - HTTP_USER=admin
+      - HTTP_PASS=admin  
+    restart: on-failure:1
+    networks:
+      - dns
+networks:
+  dns:
+    driver: bridge

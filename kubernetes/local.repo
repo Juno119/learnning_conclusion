@@ -1,0 +1,7 @@
+#local.repo
+[local]
+name=local
+baseurl=file:///mnt/cdrom
+enabled=1
+gpgcheck=0
+gpgkey=file:///mnt/cdrom/RPM-GPG-KEY-CentOS-7

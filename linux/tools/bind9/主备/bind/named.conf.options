@@ -1,0 +1,52 @@
+//添加了192.168.140.0/24整个网段为可信任，允许递归查询
+acl trustclients {
+        192.168.1.0/24; 
+};
+
+options {
+        directory "/var/cache/bind";
+        listen-on port 53 { any; };
+
+        // If there is a firewall between you and nameservers you want
+        // to talk to, you may need to fix the firewall to allow multiple
+        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+        // If your ISP provided one or more IP addresses for stable
+        // nameservers, you probably want to use them as forwarders.
+        // Uncomment the following block, and insert the addresses replacing
+        // the all-0's placeholder.
+
+        // forwarders {
+        //      0.0.0.0;
+        // };
+        
+        forward first;
+        forwarders {
+            211.148.192.141;
+        };
+
+        //========================================================================
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //========================================================================
+        dnssec-validation auto;
+
+        auth-nxdomain no;    # conform to RFC1035
+        listen-on-v6 { any; };
+        recursion yes ;
+        allow-query { trustclients;};
+        allow-transfer { none; };
+
+};
+
+logging {
+    channel query_log { //这段是对日志文件的定义
+    file "query.log" versions 5 size 20m; //定义文件名，文件大小
+    severity info; //日志级别
+    print-time yes; //是否输出日期
+    print-category yes; //是否输出日志类型
+    };
+    category queries {
+        query_log;
+    };
+};
